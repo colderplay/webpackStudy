@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function myInstanceof(left, right) {
+        const lCon = left.__proto__;
+        const rCon = right.prototype;
+        while (true) {
+          if (lCon === null) {
+            return false;
+          }
+          if (rCon === lCon) {
+            return true;
+          }
+          lCon = lCon.__proto__;
+        }
+      }
+
+      function Foo() {}
+      var c = new Foo();
+
+      function child() {}
+      function father() {}
+      child.prototype = new father();
+      var d = new child();
+
+      console.log(myInstanceof(c, Foo));
+    </script>
+  </body>
+</html>

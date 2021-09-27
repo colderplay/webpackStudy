@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function Otaku(name, age) {
+        this.name = name;
+        this.age = age;
+
+        this.habit = "Games";
+      }
+
+      // 因为缺乏锻炼的缘故，身体强度让人担忧
+      Otaku.prototype.strength = 60;
+
+      Otaku.prototype.sayYourName = function () {
+        console.log("I am " + this.name);
+      };
+
+      function myNew() {
+        let obj = {};
+        let Con = [].shift.call(arguments);
+        obj.__proto__ = Con.prototype;
+        let res = Con.apply(obj, arguments);
+        return res instanceof Object ? res : obj;
+      }
+
+      const tom = new Otaku("lisa", 50);
+      const bob = myNew(Otaku, "xiaoming", 18);
+      console.log(tom.strength);
+      console.log(bob.strength);
+    </script>
+  </body>
+</html>

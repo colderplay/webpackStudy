@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script>
+    class MyPromise {
+      constructor(excenet) {
+        this.initStatus();
+        this.initThis();
+        this.onFulfilledCallBack = [];
+        this.onRejectedCallBack = [];
+        try {
+          excenet(this.resolve, this.reject);
+        } catch (e) {
+          this.reject(e);
+        }
+      }
+      initStatus() {
+        this.status = "pending";
+        this.result = "";
+      }
+      initThis() {
+        this.resolve = this.resolve.bind(this);
+        this.reject = this.reject.bind(this);
+      }
+      resolve(val) {
+        if (this.status !== "pending") return;
+        this.status = "fulfilled";
+        this.result = val;
+        while (this.onFulfilledCallBack.length > 0) {
+          this.onFulfilledCallBack.shift()(this.result);
+        }
+      }
+      reject(reason) {
+        if (this.status !== "pending") return;
+        this.status = "rejected";
+        this.result = reason;
+        while (this.onRejectedCallBack.length > 0) {
+          this.onRejectedCallBack.shift()(this.result);
+        }
+      }
+      then(onFulfilled, onRejected) {
+        typeof onFulfilled === "function" ? onFulfilled : (val) => val;
+        typeof onRejected === "function"
+          ? onRejected
+          : (reason) => {
+              throw reason;
+            };
+
+        var thenPromise = new MyPromise((resolve, reject) => {
+          const resolvePromise = (cb) => {
+            try {
+              const x = cb(this.result);
+              console.log(x);
+              console.log(x instanceof MyPromise);
+              if (x === thenPromise) {
+                throw new Error("不能返回自身。。。");
+              }
+              if (x instanceof MyPromise) {
+                x.then(resolve, reject);
+              } else {
+                resolve(x);
+              }
+            } catch (err) {
+              reject(err);
+            }
+          };
+          if (this.status === "pending") {
+            this.onFulfilledCallBack.push(
+              resolvePromise.bind(this, onFulfilled)
+            );
+            this.onRejectedCallBack.push(resolvePromise.bind(this, onRejected));
+          }
+          if (this.status === "fulfilled") {
+            resolvePromise(onFulfilled);
+          }
+          if (this.status === "rejected") {
+            resolvePromise(onRejected);
+          }
+        });
+
+        return thenPromise;
+      }
+    }
+    const p1 = new MyPromise((resolve, reject) => {
+      resolve(10);
+    })
+      .then(
+        (res) => new MyPromise((resolve, reject) => resolve(3 * res)),
+        (err) => console.log(err)
+      )
+      .then(
+        (res) => console.log(res),
+        (err) => console.log(err)
+      );
+  </script>
+</html>

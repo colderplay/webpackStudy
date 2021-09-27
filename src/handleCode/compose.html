@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      //   Function.prototype.after = function (fn) {
+      //     const self = this;
+      //     return function (...args) {
+      //       let result = self.apply(null, args);
+      //       return fn.call(null, result);
+      //     };
+      //   };
+      const add = (f, g) => {
+        return (x) => f(g(x));
+      };
+
+      function step1(a) {
+        console.log(a);
+        console.log("step1-----");
+        return a;
+      }
+      function step2(a) {
+        console.log(a);
+        console.log("step2-----");
+        return a;
+      }
+      function step3(a) {
+        console.log(a);
+        console.log("step3-----");
+        return a;
+      }
+      function step4(a) {
+        console.log(a);
+
+        console.log("step4---");
+        return a;
+      }
+      const arr = [step1, step2, step3, step4];
+      const compose = arr.reverse().reduce(add);
+      compose(444);
+    </script>
+  </body>
+</html>
